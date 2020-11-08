@@ -58,9 +58,9 @@ public class Cinema {
         System.out.printf("Ticket price: $%.0f%n",fl1.getP());
         t1.setSeatInfo(requestRow, requestSeat);
     }
-    
+
     public static void statistics(Theatre t1){
-        //TODO implement statistics
+
     }
 
 }
@@ -70,6 +70,10 @@ class Theatre {
     private Floor[][] floor;
     private static double basePrice;
     private static double reducedPrice;
+    private int purchasedTickets;
+    private double relativePurchasedTickets;
+    private double income;
+    private double totalIncome;
     
     public Theatre(int rows, int seats, double basePrice, double reducedPrice){
         this.rows = rows;
@@ -86,6 +90,43 @@ class Theatre {
 
     public void setSeatInfo(int row, int seat){
         this.floor[row][seat].setS('B');
+    }
+
+    public void calculate(){
+        int count = 0;
+        int sum = 0;
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < seats; j++){
+                if (floor[i][j].getS() == 'B') {
+                    count++;
+                    sum += floor[i][j].getP();
+                }
+            }
+        }
+        this.purchasedTickets = count;
+        this.income = sum;
+        this.relativePurchasedTickets = (rows * seats) / (double) this.purchasedTickets;
+        if ( rows * seats <= 60) this.totalIncome = rows * seats * basePrice;
+        else {
+            this.totalIncome = (rows / 2) * basePrice;
+            this.totalIncome += (rows - (rows /2)) * reducedPrice;
+        }
+    }
+
+    public double getRelativePurchasedTickets() {
+        return relativePurchasedTickets;
+    }
+
+    public double getIncome() {
+        return income;
+    }
+
+    public double getTotalIncome() {
+        return totalIncome;
+    }
+
+    public int getPurchasedTickets(){
+        return this.purchasedTickets;
     }
 
     private void initFloor(){
