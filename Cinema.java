@@ -15,14 +15,14 @@ public class Cinema {
         int seats = sc.nextInt();
         Theatre martin1 = new Theatre(rows, seats, basePrice, reducedPrice);
 
-        do {
+        menu1: while(true) {
             printMenu();
             int menu = sc.nextInt();
             switch(menu){
                 case 0:
                     System.out.println("Bye bye");
                     quit = true;
-                    break;
+                    break menu1;
                 case 1:
                     martin1.printTheatre();
                    // quit = true;
@@ -38,7 +38,7 @@ public class Cinema {
                     System.out.println("Command unknown. try again");
                     break;
             }
-        } while (!quit);
+        }
 
     }
 
@@ -49,18 +49,40 @@ public class Cinema {
         System.out.println("0. Exit");
     }
 
-    public static void buyTicket(Theatre t1){
-        System.out.println("Enter a row number:");
-        int requestRow = sc.nextInt() - 1;
-        System.out.println("Enter a seat number in that row:");
-        int requestSeat = sc.nextInt() - 1;
-        Floor fl1 = t1.getSeatInfo(requestRow, requestSeat);
-        System.out.printf("Ticket price: $%.0f%n",fl1.getP());
+    public static void buyTicket(Theatre t1) {
+        int requestRow  = 0;
+        int requestSeat = 0;
+        menu2: while (true) {
+            while(true) {
+                System.out.println("Enter a row number:");
+                requestRow = sc.nextInt() - 1;
+                sc.nextLine();
+                if (requestRow < 0 || requestRow > t1.getRows() - 1) {
+                    System.out.println("Wrong input!");
+                } else break;
+            }
+            while(true) {
+                System.out.println("Enter a seat number in that row:");
+                requestSeat = sc.nextInt() - 1;
+                sc.nextLine();
+                if (requestSeat < 0 || requestSeat > t1.getSeats() - 1) {
+                    System.out.println("Wrong input!");
+                } else break;
+            }
+            if (!t1.available(requestRow, requestSeat)){
+                System.out.println("That ticket has already been purchased");
+            } else break menu2;
+        }
+        System.out.printf("Ticket price: $%.0f%n%n",t1.getPrice(requestRow, requestSeat));
         t1.setSeatInfo(requestRow, requestSeat);
     }
 
     public static void statistics(Theatre t1){
-
+        t1.calculateStats();
+        System.out.printf("Number of purchased tickets: %d%n", t1.getPurchasedTickets());
+        System.out.printf("Percentage: %.2f%%%n", t1.getRelativePurchasedTickets());
+        System.out.printf("Current income: $%.0f%n", t1.getIncome());
+        System.out.printf("Total income: $%.0f%n%n", t1.getTotalIncome());
     }
 
 }
@@ -84,6 +106,22 @@ class Theatre {
         initFloor();
     }
 
+    public int getRows(){
+        return this.rows;
+    }
+
+    public int getSeats() {
+        return this.seats;
+    }
+
+    public boolean available(int row, int seat){
+        return (this.floor[row][seat].getS() == 'S');
+    }
+
+    public double getPrice(int row, int seat){
+        return (this.floor[row][seat].getP());
+    }
+
     public Floor getSeatInfo(int row, int seat){
         return floor[row][seat];
     }
@@ -92,7 +130,7 @@ class Theatre {
         this.floor[row][seat].setS('B');
     }
 
-    public void calculate(){
+    public void calculateStats(){
         int count = 0;
         int sum = 0;
         for (int i = 0; i < rows; i++) {
@@ -105,11 +143,11 @@ class Theatre {
         }
         this.purchasedTickets = count;
         this.income = sum;
-        this.relativePurchasedTickets = (rows * seats) / (double) this.purchasedTickets;
+        this.relativePurchasedTickets =  ((double) this.purchasedTickets / (rows * seats)) * 100;
         if ( rows * seats <= 60) this.totalIncome = rows * seats * basePrice;
         else {
-            this.totalIncome = (rows / 2) * basePrice;
-            this.totalIncome += (rows - (rows /2)) * reducedPrice;
+            this.totalIncome = (rows / 2) * seats * basePrice;
+            this.totalIncome += (rows - (rows /2)) * seats * reducedPrice;
         }
     }
 
@@ -190,3 +228,17 @@ class Floor {
         return new Floor(s, p);
     }
 }
+
+/*
+class UserInterface {
+
+    public void showDefaultInterface() {
+        System.out.println("1. Show the seats");
+        System.out.println("2. Buy a ticket");
+        System.out.println("3. Statistics");
+        System.out.println("0. Exit");
+    }
+
+    public void show
+
+}*/
