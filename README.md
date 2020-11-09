@@ -1,7 +1,9 @@
 # Cinema
 Project Cinema on HyperSkill
 
-Currently in stage 4/5.
+TO DO : implement the userinterface class
+
+Currently in stage 5/5. FINISHED
 
 Using classes Theatre (the cinema) and Floor (the seats).
 
